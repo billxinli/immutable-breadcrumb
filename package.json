@@ -9,9 +9,13 @@
   "author": "",
   "license": "GPL-3.0",
   "dependencies": {
+    "bluebird": "^3.5.1",
     "hasha": "^3.0.0",
+    "ipfs": "^0.26.0",
     "ipfs-api": "^14.3.5",
+    "lodash": "^4.17.4",
     "object-hash": "1.1.8",
+    "qrcode": "^0.9.0",
     "web3": "^1.0.0-beta.22"
   }
 }

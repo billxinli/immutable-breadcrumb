@@ -10,6 +10,10 @@ Then run the node as: `geth --datadir ~/eth/rinkeby --rinkeby --fast --rpc --rpc
 
 ## ipfs
 
+ipfs now starts automatically
+
+### Old
+
 Assume the ipfs path is at: `~/eth/ipfs`
 
 Then run the ipfs initializer as: `IPFS_PATH=~/eth/ipfs ipfs init`
