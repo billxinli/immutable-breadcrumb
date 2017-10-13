@@ -10,13 +10,20 @@
   "license": "GPL-3.0",
   "dependencies": {
     "bluebird": "^3.5.1",
+    "config": "^1.26.2",
     "hasha": "^3.0.0",
     "ipfs": "^0.26.0",
     "ipfs-api": "^14.3.5",
+    "jade": "^1.11.0",
+    "js-string-compression": "^1.0.1",
+    "kue": "^0.11.6",
     "lodash": "^4.17.4",
     "object-hash": "1.1.8",
     "openpgp": "^2.5.12",
     "qrcode": "^0.9.0",
-    "web3": "^1.0.0-beta.22"
+    "standard": "^10.0.3",
+    "tmp": "0.0.33",
+    "web3": "^1.0.0-beta.22",
+    "wkhtmltopdf": "^0.3.4"
   }
 }

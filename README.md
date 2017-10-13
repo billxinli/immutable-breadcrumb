@@ -6,7 +6,7 @@ Decentralized mechanism for proof of existence of documents via the blockchain
 
 Assume the blockchain data is stored at: `~/eth/rinkeby`
 
-Then run the node as: `geth --datadir ~/eth/rinkeby --rinkeby --fast --rpc --rpcaddr "0.0.0.0"  --rpcapi="db,eth,net,web3,personal"`
+Then run the node as: `geth --datadir ~/eth/rinkeby --rinkeby --fast --rpc --rpcaddr "0.0.0.0" --rpcapi="db,eth,net,web3,shh,personal" --shh --ws --wsorigins="*"`
 
 ## ipfs
 
