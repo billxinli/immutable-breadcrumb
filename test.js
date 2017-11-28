@@ -52,7 +52,34 @@ let chunks = {
   }
 }
 
-console.log(`
+
+let printOut = []
+
+
+printOut.push(`
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Cryptographic Deed</title>
+
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+
 <style>
 .qr-code {
   border-collapse: separate;
@@ -76,294 +103,78 @@ vertical-align: top;
 }
 
 </style>
+  </head>
+
+  <body>
+    <div class="container">
+
+
 `)
 let promises = _.map(chunks.qrCodes, (chunk) => {
   let page = _.get(chunk, 'index', 0) + 1
   let qr = _.get(chunk, 'chunk', '')
   return qrCode.createQRArray(qr)
     .then((rows) => {
-      console.log('<table class="qr-code">')
+      printOut.push('<table class="qr-code">')
       _.forEach(rows, (cells) => {
-        console.log('<tr>')
+        printOut.push('<tr>')
         _.forEach(cells, (cell) => {
-          console.log(`<td class="qr-cell ${cell === 1 ? 'qr-black' : 'qr-white'}"></td>`)
+          printOut.push(`<td class="qr-cell ${cell === 1 ? 'qr-black' : 'qr-white'}"></td>`)
         })
-        console.log('</tr>')
+        printOut.push('</tr>')
       })
-      console.log('</table>')
+      printOut.push('</table>')
     })
 })
 
 Promise.all(promises)
   .then(() => {
-    console.log('<hr>')
+    printOut.push('<hr>')
 
-    console.log(`<p><pre>TXH: ${chunks.results.transactionHash}</pre></p>`)
+    printTable(chunks.results.verificationDocument.data)
+    printOut.push('<hr>')
+
+    printOut.push(`<p><pre>TXH: ${chunks.results.transactionHash}</pre></p>`)
     let verificationDocument = JSON.parse(_.map(chunks.qrCodes, 'chunk').join(''))
     const objectHash = require('object-hash')
 
     let H = objectHash(verificationDocument.verificationDocument, {algorithm: 'sha256'})
-    console.log(`<p><pre>H: 0x0003${H}</pre></p>`)
+    printOut.push(`<p><pre>H: 0x0003${H}</pre></p>`)
 
-    console.log(`<p><pre>IPFSH:</pre></p>`)
+    printOut.push(`<p><pre>IPFSH:</pre></p>`)
     _.forEach(chunks.results.ipfs, (file) => {
-      console.log(`<p><pre>- https://ipfs.io/ipfs/${file.hash}</pre></p>`)
+      printOut.push(`<p><pre>- https://ipfs.io/ipfs/${file.hash}</pre></p>`)
     })
 
-    console.log('<hr>')
+    printOut.push('<hr>')
 
     function printTable (object) {
       if (_.isObject(object)) {
-        console.log('<table border="1">')
+        printOut.push('<table border="1">')
 
         _.forEach(object, (value, key) => {
-          console.log(`<tr>`)
-          console.log(`<td>`)
-          console.log(key)
-          console.log(`</td>`)
-          console.log(`<td>`)
+          printOut.push(`<tr>`)
+          printOut.push(`<td>`)
+          printOut.push(key)
+          printOut.push(`</td>`)
+          printOut.push(`<td>`)
           printTable(value)
-          console.log(`</td>`)
-          console.log(`</tr>`)
+          printOut.push(`</td>`)
+          printOut.push(`</tr>`)
         })
-        console.log('</table>')
+        printOut.push('</table>')
       } else if (_.isArray(object)) {
-        console.log('<ul>')
+        printOut.push('<ul>')
         _.forEach(object, (o) => {
-          console.log(`<li>${o}</li>`)
+          printOut.push(`<li>${o}</li>`)
         })
-        console.log('</ul>')
+        printOut.push('</ul>')
       } else {
-        console.log(object)
+        printOut.push(object)
       }
     }
-    printTable(chunks.results.verificationDocument.data)
-    console.log('<hr>')
-    console.log('<p><pre>This is your cryptographic deed</pre></p>')
+
+    printOut.push('<p><pre>This is your cryptographic deed</pre></p>')
   })
-// const _ = require('lodash')
-// let verificationDocument = require('./verification-document')
-// let qrCode = require('./lib/qrCode')
-//
-// let tt = {
-//   'verificationDocument': {
-//     'data': {
-//       'papId': 1,
-//       'assetProperties': {
-//         'type': 'house',
-//         'numberOfRooms': 3,
-//         'gpsCoordinates': [
-//           {
-//             'lat': 0,
-//             'lng': 0
-//           },
-//           {
-//             'lat': 1,
-//             'lng': 0
-//           },
-//           {
-//             'lat': 1,
-//             'lng': 1
-//           },
-//           {
-//             'lat': 0,
-//             'lng': 1
-//           }
-//         ]
-//       }
-//     },
-//     'files': [
-//       {
-//         'path': '/Users/billli/Desktop/immutable-breadcrumb/tmp/image.jpeg',
-//         'hash': ''
-//       },
-//       {
-//         'path': '/Users/billli/Desktop/immutable-breadcrumb/tmp/image2.jpg',
-//         'hash': ''
-//       }
-//     ]
-//   },
-//   'transactionHash': '0xd0d7bbde3e43898eac1538f9ed571408f1074a377d925e9b32427df42bc3c7a7',
-//   'ipfs': [
-//     {
-//       'path': 'QmWrXEpMid3oemwThvQRRYuyrGi1aZB8ZCHPgBaaUuP6sb',
-//       'hash': 'QmWrXEpMid3oemwThvQRRYuyrGi1aZB8ZCHPgBaaUuP6sb',
-//       'size': 208612
-//     },
-//     {
-//       'path': 'QmVvhHMZADnQtE5zbwmgcA8kSmJyFRZoSFeN5Z9RZdQwCS',
-//       'hash': 'QmVvhHMZADnQtE5zbwmgcA8kSmJyFRZoSFeN5Z9RZdQwCS',
-//       'size': 58337
-//     }
-//   ]
-// }
-//
-// let t = `[${JSON.stringify(tt)},${JSON.stringify(tt)},${JSON.stringify(tt)},${JSON.stringify(tt)},${JSON.stringify(tt)},${JSON.stringify(tt)},${JSON.stringify(tt)},${JSON.stringify(tt)},${JSON.stringify(tt)},${JSON.stringify(tt)},${JSON.stringify(tt)}]`
-//
-// console.log(JSON.stringify(t))
-// console.log(JSON.stringify(t).length)
-//
-// let f = new Buffer(JSON.stringify(t))
-//
-// console.log(f.toString('hex'))
-// console.log(f.toString('hex').length)
-//
-// var jsscompress = require('js-string-compression')
-//
-// var raw_text = JSON.stringify(t)
-//
-// var hm = new jsscompress.Hauffman()
-// var compressed = hm.compress(raw_text)
-//
-// console.log('before compressed: ' + raw_text)
-// console.log('length: ' + raw_text.length)
-// console.log('after compressed: ' + compressed)
-// console.log('length: ' + compressed.length)
-//
-// console.log(new Buffer(compressed).toString('base64'))
-// console.log(new Buffer(compressed).toString('base64').length)
-//
-// console.log('decompressed: ' + hm.decompress(compressed))
-//
-// qrCode.createQRArray(JSON.stringify(verificationDocument))
-//   .then(data => {
-//
-//     const black = '\033[40m  \033[0m'
-//     const white = '\033[47m  \033[0m'
-//
-//     let toCell = function (isBlack) {
-//       return isBlack ? black : white
-//     }
-//
-//     _.forEach(data, (row) => {
-//       _.forEach(row, (cell) => {
-//         process.stdout.write(toCell((cell === 1)))
-//       })
-//       process.stdout.write('\n')
-//     })
-//
-//   })
-//
-// const _ = require('lodash')
-// const Promise = require('bluebird')
-// const Web3 = require('web3')
-//
-// const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
-//
-// let owner = '0xBA769d1bc864C5380559991D0F59c10884740886'
-// let user = '0x62b82e9a2777ab371cba44d1762026fa73008bfc'
-//
-//
-// var contractAbi = new web3.eth.Contract([
-//   {
-//     'constant': true,
-//     'inputs': [],
-//     'name': 'getWaitingList',
-//     'outputs': [
-//       {
-//         'name': '',
-//         'type': 'address[]'
-//       }
-//     ],
-//     'payable': false,
-//     'type': 'function'
-//   },
-//   {
-//     'constant': true,
-//     'inputs': [],
-//     'name': 'getCurrent',
-//     'outputs': [
-//       {
-//         'name': '',
-//         'type': 'uint256'
-//       }
-//     ],
-//     'payable': false,
-//     'type': 'function'
-//   },
-//   {
-//     'constant': true,
-//     'inputs': [],
-//     'name': 'owner',
-//     'outputs': [
-//       {
-//         'name': '',
-//         'type': 'address'
-//       }
-//     ],
-//     'payable': false,
-//     'type': 'function'
-//   },
-//   {
-//     'constant': false,
-//     'inputs': [],
-//     'name': 'pop',
-//     'outputs': [
-//       {
-//         'name': '',
-//         'type': 'address'
-//       }
-//     ],
-//     'payable': false,
-//     'type': 'function'
-//   },
-//   {
-//     'constant': false,
-//     'inputs': [],
-//     'name': 'addToWaitingList',
-//     'outputs': [],
-//     'payable': false,
-//     'type': 'function'
-//   },
-//   {
-//     'constant': true,
-//     'inputs': [
-//       {
-//         'name': '',
-//         'type': 'uint256'
-//       }
-//     ],
-//     'name': 'waitingList',
-//     'outputs': [
-//       {
-//         'name': '',
-//         'type': 'address'
-//       }
-//     ],
-//     'payable': false,
-//     'type': 'function'
-//   },
-//   {
-//     'inputs': [],
-//     'payable': false,
-//     'type': 'constructor'
-//   }
-// ], '0x4313e7d669ffed840e49b0a07294f85a0401effa', {from: owner})
-//
-//
-// console.log(contractAbi)
-//
-//
-//
-// return web3.eth.personal.unlockAccount(owner, 'password', 15000)
-//   .then((decrypted) => {
-//     console.log(decrypted)
-//     // call just read
-//     return contractAbi.methods.getCurrent().call()
-//       .then((t) => {console.log(t)})
-//       .catch((err) => {console.log(err)})
-//
-//     // //send is used to create transaction
-//     return contractAbi.methods.pop().send()
-//       .then((t) => {console.log(t)})
-//       .catch((err) => {console.log(err)})
-//   })
-//
-// var myContract = contractAbi.at('0x05adb9b1662d60b937bed9ac966e3505a11af87a')
-// // suppose you want to call a function named myFunction of myContract
-// var getData = myContract.getCurrent.getData()
-// //finally paas this data parameter to send Transaction
-// web3.eth.sendTransaction({to: '0x05adb9b1662d60b937bed9ac966e3505a11af87a', from: '0xba769d1bc864c5380559991d0f59c10884740886', data: getData})
-//   .then((data) => {
-//     console.log(data)
-//   })
+
+
